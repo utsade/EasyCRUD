@@ -5,6 +5,13 @@
     <link rel="icon" type="image/svg+xml" href="./src/assets/bgimg.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CLOUDBLITZ | Student Registration</title>
+    <script>
+      window.ENV = {
+        VITE_API_URL: '${VITE_API_URL}',
+        VITE_API_BASE_URL: '${VITE_API_BASE_URL}',
+        VITE_APP_TITLE: '${VITE_APP_TITLE}'
+      };
+    </script>
   </head>
   <body>
     <div id="root"></div>

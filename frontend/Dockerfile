@@ -13,14 +13,6 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build arguments for environment variable substitution
-ARG BACKEND_IP
-
-# Replace $BACKEND with actual IP in .env file
-RUN if [ -f .env ]; then \
-        sed -i "s/\$BACKEND/$BACKEND_IP/g" .env; \
-    fi
-
 # Build the application
 RUN npm run build
 
@@ -35,6 +27,14 @@ COPY --from=build /app/dist /usr/share/nginx/html
 
 # Copy custom nginx configuration
 COPY nginx-simple.conf /etc/nginx/conf.d/default.conf
+
+# Create runtime config script
+RUN echo '#!/bin/sh' > /docker-entrypoint.d/30-envsubst-on-templates.sh && \
+    echo 'set -e' >> /docker-entrypoint.d/30-envsubst-on-templates.sh && \
+    echo 'for template in /usr/share/nginx/html/index.html; do' >> /docker-entrypoint.d/30-envsubst-on-templates.sh && \
+    echo '  envsubst < "$template" > "$template.tmp" && mv "$template.tmp" "$template"' >> /docker-entrypoint.d/30-envsubst-on-templates.sh && \
+    echo 'done' >> /docker-entrypoint.d/30-envsubst-on-templates.sh && \
+    chmod +x /docker-entrypoint.d/30-envsubst-on-templates.sh
 
 # Use existing nginx user (already exists in nginx:alpine)
 
