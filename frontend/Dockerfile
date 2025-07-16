@@ -13,6 +13,21 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Create runtime config script
+RUN echo '#!/bin/sh\n\
+# Create runtime config file\n\
+cat > /usr/share/nginx/html/runtime-config.js << EOF\n\
+window.RUNTIME_CONFIG = {\n\
+  VITE_API_URL: "$VITE_API_URL",\n\
+  VITE_API_BASE_URL: "$VITE_API_BASE_URL",\n\
+  VITE_APP_TITLE: "$VITE_APP_TITLE"\n\
+};\n\
+EOF\n\
+\n\
+# Start nginx\n\
+exec nginx -g "daemon off;"\n\
+' > /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
+
 # Build the application
 RUN npm run build
 
@@ -46,5 +61,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:3000 || exit 1
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"] 
+# Use the entrypoint script
+ENTRYPOINT ["/docker-entrypoint.sh"] 

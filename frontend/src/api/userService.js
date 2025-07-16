@@ -1,6 +1,7 @@
 import axios from "axios";
+import { getApiUrl } from "../utils/config.js";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = getApiUrl();
 
 export const fetchUsers = async () => {
   try {
