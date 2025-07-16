@@ -14,9 +14,9 @@ RUN npm ci
 COPY . .
 
 # Build with environment variables
-ARG VITE_API_URL=http://backend:8080/api
-ARG VITE_API_BASE_URL=http://backend:8080
-ARG VITE_APP_TITLE=EasyCRUD Student Registration
+ARG VITE_API_URL
+ARG VITE_API_BASE_URL
+ARG VITE_APP_TITLE
 
 # Set environment variables for build
 ENV VITE_API_URL=$VITE_API_URL
