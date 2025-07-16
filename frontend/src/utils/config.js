@@ -17,7 +17,4 @@ export const getConfig = (key, defaultValue = '') => {
 // Specific getters for common config values
 export const getApiUrl = () => getConfig('VITE_API_URL', 'http://localhost:8080/api');
 export const getApiBaseUrl = () => getConfig('VITE_API_BASE_URL', 'http://localhost:8080');
-export const getAppTitle = () => getConfig('VITE_APP_TITLE', 'EasyCRUD Student Registration');
-
-// Export for backward compatibility
-export const getApiBaseUrl = getApiBaseUrl; 
+export const getAppTitle = () => getConfig('VITE_APP_TITLE', 'EasyCRUD Student Registration'); 
