@@ -26,7 +26,7 @@ RUN apk add --no-cache curl
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx-simple.conf /etc/nginx/conf.d/default.conf
 
 # Use existing nginx user (already exists in nginx:alpine)
 
@@ -36,8 +36,8 @@ RUN chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /etc/nginx/conf.d && \
     chown -R nginx:nginx /usr/share/nginx/html
 
-# Switch to nginx user
-USER nginx
+# Run as root for proper nginx startup
+USER root
 
 # Expose port
 EXPOSE 3000
