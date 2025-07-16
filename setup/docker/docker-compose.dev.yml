@@ -45,12 +45,12 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://backend:8080/api
+        VITE_API_BASE_URL: http://backend:8080
+        VITE_APP_TITLE: EasyCRUD Student Registration
     container_name: easycrud-frontend-dev
     restart: unless-stopped
-    environment:
-      VITE_API_BASE_URL: http://backend:8080
-      VITE_API_URL: http://backend:8080/api
-      VITE_APP_TITLE: EasyCRUD Student Registration
     ports:
       - "3000:3000"
     depends_on:

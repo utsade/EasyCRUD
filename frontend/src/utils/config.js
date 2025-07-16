@@ -1,11 +1,6 @@
-// Utility to get configuration values from both build-time and runtime
+// Utility to get configuration values from build-time environment variables
 export const getConfig = (key, defaultValue = '') => {
-  // First try runtime config (from Docker environment variables)
-  if (window.RUNTIME_CONFIG && window.RUNTIME_CONFIG[key]) {
-    return window.RUNTIME_CONFIG[key];
-  }
-  
-  // Fall back to build-time environment variables
+  // Use build-time environment variables
   if (import.meta.env[key]) {
     return import.meta.env[key];
   }
