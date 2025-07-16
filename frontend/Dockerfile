@@ -13,6 +13,33 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Build arguments for backend IP detection
+ARG BACKEND_HOST
+ARG BACKEND_PORT=8080
+
+# Install curl for IP detection
+RUN apk add --no-cache curl
+
+# Detect backend IP and update .env file
+RUN if [ -n "$BACKEND_HOST" ]; then \
+        # If BACKEND_HOST is provided, use it directly
+        BACKEND_IP="$BACKEND_HOST"; \
+    else \
+        # Try to detect the backend IP automatically
+        BACKEND_IP=$(curl -s ifconfig.me 2>/dev/null || echo "localhost"); \
+    fi && \
+    echo "Detected backend IP: $BACKEND_IP" && \
+    if [ -f .env ]; then \
+        sed -i "s/\$BACKEND/$BACKEND_IP/g" .env; \
+        echo "Updated .env file with backend IP: $BACKEND_IP"; \
+        cat .env; \
+    else \
+        echo "VITE_API_URL=http://$BACKEND_IP:$BACKEND_PORT/api" > .env; \
+        echo "VITE_API_BASE_URL=http://$BACKEND_IP:$BACKEND_PORT" >> .env; \
+        echo "VITE_APP_TITLE=EasyCRUD Student Registration" >> .env; \
+        echo "Created .env file with backend IP: $BACKEND_IP"; \
+    fi
+
 # Build the application
 RUN npm run build
 
@@ -27,14 +54,6 @@ COPY --from=build /app/dist /usr/share/nginx/html
 
 # Copy custom nginx configuration
 COPY nginx-simple.conf /etc/nginx/conf.d/default.conf
-
-# Create runtime config script
-RUN echo '#!/bin/sh' > /docker-entrypoint.d/30-envsubst-on-templates.sh && \
-    echo 'set -e' >> /docker-entrypoint.d/30-envsubst-on-templates.sh && \
-    echo 'for template in /usr/share/nginx/html/index.html; do' >> /docker-entrypoint.d/30-envsubst-on-templates.sh && \
-    echo '  envsubst < "$template" > "$template.tmp" && mv "$template.tmp" "$template"' >> /docker-entrypoint.d/30-envsubst-on-templates.sh && \
-    echo 'done' >> /docker-entrypoint.d/30-envsubst-on-templates.sh && \
-    chmod +x /docker-entrypoint.d/30-envsubst-on-templates.sh
 
 # Use existing nginx user (already exists in nginx:alpine)
 

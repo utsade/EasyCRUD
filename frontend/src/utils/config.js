@@ -1,11 +1,6 @@
-// Utility to get configuration values from runtime environment variables
+// Utility to get configuration values from build-time environment variables
 export const getConfig = (key, defaultValue = '') => {
-  // First try to get from window.ENV (runtime substitution)
-  if (typeof window !== 'undefined' && window.ENV && window.ENV[key]) {
-    return window.ENV[key];
-  }
-  
-  // Fallback to build-time environment variables
+  // Use build-time environment variables
   if (import.meta.env[key]) {
     return import.meta.env[key];
   }
