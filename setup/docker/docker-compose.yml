@@ -4,7 +4,7 @@ services:
   # MariaDB Database
   database:
     image: mariadb:10.11
-    container_name: easycrud-db
+    container_name: easycrud-db-dev
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
@@ -14,22 +14,17 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data_dev:/var/lib/mysql
       - ./backend/database_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
     networks:
-      - easycrud-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      - easycrud-network-dev
 
   # Spring Boot Backend
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: easycrud-backend
+    container_name: easycrud-backend-dev
     restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://database:3306/student_db
@@ -41,43 +36,31 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      database:
-        condition: service_healthy
+      - database
     networks:
-      - easycrud-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      - easycrud-network-dev
 
   # React Frontend
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: easycrud-frontend
+      args:
+        BACKEND_HOST: 34.201.59.80
+        BACKEND_PORT: 8080
+    container_name: easycrud-frontend-dev
     restart: unless-stopped
-    environment:
-      VITE_API_BASE_URL: http://localhost:8080
-      VITE_APP_TITLE: EasyCRUD Student Registration
     ports:
       - "3000:3000"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
-      - easycrud-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      - easycrud-network-dev
 
   # Nginx Reverse Proxy (Optional)
   nginx:
     image: nginx:alpine
-    container_name: easycrud-nginx
+    container_name: easycrud-nginx-dev
     restart: unless-stopped
     ports:
       - "80:80"
@@ -89,12 +72,12 @@ services:
       - frontend
       - backend
     networks:
-      - easycrud-network
+      - easycrud-network-dev
 
 volumes:
-  db_data:
+  db_data_dev:
     driver: local
 
 networks:
-  easycrud-network:
+  easycrud-network-dev:
     driver: bridge 
