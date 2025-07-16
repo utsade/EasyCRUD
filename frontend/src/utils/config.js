@@ -11,10 +11,10 @@ export const getConfig = (key, defaultValue = '') => {
 
 // Specific getters for common config values
 export const getApiUrl = () => {
-  const apiUrl = getConfig('VITE_API_URL', 'http://34.201.59.80:8080/api');
+  const apiUrl = getConfig('VITE_API_URL', 'http://localhost:8080/api');
   console.log('API URL:', apiUrl); // Debug log
   return apiUrl;
 };
 
-export const getApiBaseUrl = () => getConfig('VITE_API_BASE_URL', 'http://34.201.59.80:8080');
+export const getApiBaseUrl = () => getConfig('VITE_API_BASE_URL', 'http://localhost:8080');
 export const getAppTitle = () => getConfig('VITE_APP_TITLE', 'EasyCRUD Student Registration'); 

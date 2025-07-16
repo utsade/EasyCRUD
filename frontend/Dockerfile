@@ -13,15 +13,13 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build with environment variables
-ARG VITE_API_URL
-ARG VITE_API_BASE_URL
-ARG VITE_APP_TITLE
+# Build arguments for environment variable substitution
+ARG BACKEND_IP
 
-# Set environment variables for build
-ENV VITE_API_URL=$VITE_API_URL
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
-ENV VITE_APP_TITLE=$VITE_APP_TITLE
+# Replace $BACKEND with actual IP in .env file
+RUN if [ -f .env ]; then \
+        sed -i "s/\$BACKEND/$BACKEND_IP/g" .env; \
+    fi
 
 # Build the application
 RUN npm run build
