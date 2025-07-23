@@ -4,10 +4,10 @@ COPY . /opt/
 
 WORKDIR /opt
 
-#RUN rm -f src/main/resources/application.properties && \
-#    cp -f application.properties src/main/resources/application.properties
+RUN rm -f src/main/resources/application.properties && \
+    cp -f application.properties src/main/resources/application.properties
 
-COPY application.properties src/main/resources/
+#COPY application.properties src/main/resources/
 
 RUN mvn clean package -DskipTests
 
