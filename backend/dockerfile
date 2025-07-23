@@ -4,13 +4,13 @@ COPY . /opt/
 
 WORKDIR /opt
 
-RUN rm -rf src\main\resources\application.properties
-RUN cp application.properties src\main\resources/application.properties
+RUN rm -f src/main/resources/application.properties
+RUN cp -f application.properties src/main/resources/application.properties
 # COPY application.properties src\main\resources\application.properties
 
 RUN mvn clean package
 
-WORKDIR /opt/target/
+WORKDIR target/
 
 EXPOSE 8080
 
