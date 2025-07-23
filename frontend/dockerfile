@@ -6,7 +6,7 @@ WORKDIR /opt
 
 RUN npm install && npm run build       
 
-Run apk update && apk add apache2
+RUN apk update && apk add apache2
 
 EXPOSE 80
 
